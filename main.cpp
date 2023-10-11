@@ -36,11 +36,14 @@ void chickens()
 {
   while(1)
   {
-    mtx2.lock();
+    
     int time2 = rand() % 11 + 5;
     this_thread :: sleep_for(chrono :: seconds(time2));
     dish = all_order[0];
-    all_order.erase(all_order.begin()); 
+    mtx.lock();
+    all_order.erase(all_order.begin());
+    mtx.unlock(); 
+    mtx2.lock();
     ready_dish.push_back(dish);
     cout << "dish " << dish << " ready" << endl;
     mtx2.unlock();
@@ -68,13 +71,14 @@ int main()
     {
       this_thread :: sleep_for(chrono :: seconds(30));
       cout << "the courier picked up the order " << count ++ << endl;
+      mtx2.lock();
       for(int i = 0; i < ready_dish.size(); i ++)
       {
           cout << ready_dish[i] << endl;
       }
 
       ready_dish.clear();
-
+      mtx2.unlock();
     }
   
 
